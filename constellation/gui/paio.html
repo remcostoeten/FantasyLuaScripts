@@ -1,7 +1,9 @@
+
+
 <!--
     @title
         PAIO (Player All-In-One)
-    @authordd
+    @author
         typedef
     @notes
         Similar to Moonlight's PAIO Lua script. Grants player information all on one page without having
@@ -21,12 +23,14 @@
 
         <!-- script -->
         <script>
-            var paio = {
+
+            var paio = 
+            {
                 /// is paio running?
                 running: false,
 
                 /// game we're running
-                game: '',
+                game: "",
 
                 /// is counter-strike related game?
                 is_cs: false,
@@ -35,10 +39,14 @@
                 interval: 2000,
 
                 /// pages to load so we don't have to open 20 tabs for each script, load it via iframe instead.
-                modules: ['radar.html', 'rank_reveal.html'],
+                modules: [
+                    "radar.html",
+                    "rank_reveal.html"
+                ],
 
                 /// netvars
-                netvars: {
+                netvars:
+                {
                     m_iHealth: 0,
                     m_iArmor: 0,
                     m_szLastPlaceName: 0,
@@ -47,177 +55,154 @@
                 },
 
                 /// tf2 classes
-                classes: {
-                    1: 'Scout',
-                    2: 'Sniper',
-                    3: 'Soldier',
-                    4: 'Demoman',
-                    5: 'Medic',
-                    6: 'Heavy',
-                    7: 'Pyro',
-                    8: 'Spy',
-                    9: 'Engineer',
+                classes:
+                {
+                    1: "Scout",
+                    2: "Sniper",
+                    3: "Soldier",
+                    4: "Demoman",
+                    5: "Medic",
+                    6: "Heavy",
+                    7: "Pyro",
+                    8: "Spy",
+                    9: "Engineer"
                 },
 
                 /// load
-                load: function () {
+                load: function()
+                {
                     /// get current constellation game.
                     paio.game = constellation.game();
 
                     /// constellation isn't even running.
-                    if (paio.game == null) return false;
+                    if( paio.game == null ) return false;
 
                     /// Dota 2 not supported.
-                    if (paio.game == 'Dota 2') return false;
+                    if( paio.game == "Dota 2" ) return false;
 
                     /// set our flag for other functions to note whether we're playing a CS game or not.
-                    paio.is_cs = paio.game == 'CS:GO' || paio.game == 'CSS';
+                    paio.is_cs = paio.game == "CS:GO" || paio.game == "CSS"
 
                     /// get client.dll
-                    module_client = constellation.memory.module('client.dll');
+                    module_client = constellation.memory.module("client.dll");
 
                     /// constellation is running, but are we calibrated?
-                    if (!module_client) return false;
+                    if( !module_client ) return false;
 
                     /// get netvars
-                    paio.netvars.m_iHealth = constellation.memory.netvar(
-                        'DT_BasePlayer',
-                        'm_iHealth',
-                    );
+                    paio.netvars.m_iHealth = constellation.memory.netvar( "DT_BasePlayer", "m_iHealth");
 
-                    if (paio.is_cs) {
-                        paio.netvars.m_iArmor = constellation.memory.netvar(
-                            'DT_CSPlayer',
-                            'm_ArmorValue',
-                        );
-                        paio.netvars.m_szLastPlaceName =
-                            constellation.memory.netvar(
-                                'DT_CSPlayer',
-                                'm_szLastPlaceName',
-                            );
-                        paio.netvars.m_iAccount = constellation.memory.netvar(
-                            'DT_CSPlayer',
-                            'm_iAccount',
-                        );
+                    if( paio.is_cs )
+                    {
+                        paio.netvars.m_iArmor = constellation.memory.netvar( "DT_CSPlayer", "m_ArmorValue");
+                        paio.netvars.m_szLastPlaceName = constellation.memory.netvar( "DT_CSPlayer", "m_szLastPlaceName");
+                        paio.netvars.m_iAccount = constellation.memory.netvar( "DT_CSPlayer", "m_iAccount");
                     }
 
-                    if (paio.game == 'TF2') {
-                        paio.netvars.m_flChargeLevel =
-                            constellation.memory.netvar(
-                                'DT_WeaponMedigun',
-                                'm_flChargeLevel',
-                            );
+                    if( paio.game == "TF2" )
+                    {
+                        paio.netvars.m_flChargeLevel = constellation.memory.netvar( "DT_WeaponMedigun", "m_flChargeLevel");
                     }
 
                     /// load our modules
-                    for (var i = 0; i < paio.modules.length; i++) {
+                    for( var i = 0; i < paio.modules.length; i ++ )
+                    {
                         /// module name
                         var module_name = paio.modules[i];
 
                         /// rank_reveal should only be allowed for CS:GO
-                        if (module_name == 'rank_reveal.html') {
-                            if (paio.game != 'CS:GO') continue;
+                        if( module_name == "rank_reveal.html" )
+                        {
+                            if( paio.game != "CS:GO" ) continue;
                         }
 
                         /// "Known Issue: [icode]radar.html[/icode] will cause TF2 information to not update unless you are alt-tabbed. Radar disabled for TF2 by default."
-                        if (module_name == 'radar.html') {
-                            if (paio.game == 'TF2') continue;
+                        if( module_name == "radar.html" )
+                        {
+                            if( paio.game == "TF2" ) continue;
                         }
 
                         /// add iframe related to file.
                         $('#modules').append(`
                             <iframe style="display: block; width: 100%; height: 55%;" src="${module_name}"></iframe> 
-                        `);
+                        `)
                     }
                     /// start timer
                     window.setInterval(paio.tick, paio.interval);
-
+                    
                     /// set running flag
-                    paio.running = true;
+                    paio.running = true
 
                     /// started successfully.
                     return true;
                 },
 
                 /// tick
-                tick: function () {
+                tick: function()
+                {
                     /// get localplayer
-                    var localplayer = constellation.get.localplayer();
+                    var localplayer = constellation.get.localplayer() 
 
                     /// cannot get localplayer. we're not ingame.
-                    if (!localplayer) return;
+                    if( !localplayer ) return;
 
                     /// get all players
-                    var player_database = constellation.get.players();
+                    var player_database = constellation.get.players() 
 
                     /// array of all players so we can use later to sort and organize
-                    var player_information = [];
+                    var player_information = []
 
                     /// loop through all our player database from constellation.get.players
-                    for (const property in player_database) {
+                    for( const property in player_database )
+                    {
                         /// parse the player's json data.
-                        const json_information = JSON.parse(
-                            player_database[property],
-                        );
+                        const json_information = JSON.parse(player_database[property])
 
                         /// determine whether player is an enemy or not.
-                        json_information.is_enemy =
-                            json_information.team != localplayer.team;
+                        json_information.is_enemy = json_information.team != localplayer.team
 
                         /// get netvar values and add to object
-                        var health = constellation.memory.read(
-                            json_information.address + paio.netvars.m_iHealth,
-                        );
-                        json_information.health = health;
+                        var health = constellation.memory.read( json_information.address + paio.netvars.m_iHealth )
+                        json_information.health = health
 
-                        if (paio.is_cs) {
-                            var armor = constellation.memory.read(
-                                json_information.address +
-                                    paio.netvars.m_iArmor,
-                            );
-                            var location = constellation.memory.read_string(
-                                json_information.address +
-                                    paio.netvars.m_szLastPlaceName,
-                            );
-                            var money = constellation.memory.read(
-                                json_information.address +
-                                    paio.netvars.m_iAccount,
-                            );
+                        if( paio.is_cs )
+                        {
+                            var armor = constellation.memory.read( json_information.address + paio.netvars.m_iArmor )
+                            var location = constellation.memory.read_string( json_information.address + paio.netvars.m_szLastPlaceName )
+                            var money = constellation.memory.read( json_information.address + paio.netvars.m_iAccount )
 
-                            json_information.armor = armor;
-                            json_information.location = location;
-                            json_information.money = money;
+                            json_information.armor = armor
+                            json_information.location = location
+                            json_information.money = money
                         }
 
-                        if (paio.game == 'TF2') {
-                            if (json_information.weapon_address != 0) {
-                                json_information.charge =
-                                    constellation.memory.read_float(
-                                        json_information.weapon_address +
-                                            paio.netvars.m_flChargeLevel,
-                                    ) * 100;
+                        if( paio.game == "TF2" )
+                        {
+                            if( json_information.weapon_address != 0 )
+                            {
+                                json_information.charge = constellation.memory.read_float( json_information.weapon_address + paio.netvars.m_flChargeLevel ) * 100
                             }
                         }
 
                         /// add to our array of all players
-                        player_information.push(json_information);
+                        player_information.push( json_information )   
                     }
 
                     /// sort by team so the colors are sorted later on.
-                    player_information.sort(function (a, b) {
-                        return a.team == localplayer.team;
-                    });
+                    player_information.sort( function( a, b ) {
+                        return a.team == localplayer.team
+                    })
 
                     /**
                      *  create output string
                      *  this is better than constantly appending to the table like shown in sdk_test.html.
-                     *
+                     *  
                      *  sdk_test.html has a poor example of real-time updating because reading memory inside of the loop takes time
                      *  therefore, the players will be listed 1 by 1 and it looks like it's flickering.
-                     *
-                     *  simply store it all in a string and display it that way instead of adding content 1 by 1.
+                     * 
+                     *  simply store it all in a string and display it that way instead of adding content 1 by 1. 
                      */
-                    var output = `
+                     var output = `
                         <table id="paio_players">
                             <th>Name</th>
                             <th>Steam</th>
@@ -225,58 +210,63 @@
                     `;
 
                     /// if we're playing CS:GO or CSS, add armor, money and location values
-                    if (paio.is_cs) {
+                    if( paio.is_cs )
+                    {
                         output = output.concat(`<th>Armor</th>
                             <th>Money</th>
-                            <th>Location</th>`);
+                            <th>Location</th>`)
                     }
 
                     /// if we're playing TF2, add weapon charge level and class.
-                    if (paio.game == 'TF2') {
+                    if( paio.game == "TF2" )
+                    {
                         output = output.concat(`<th>Class</th>
-                            <th>Weapon Charge</th>`);
+                            <th>Weapon Charge</th>`)
                     }
 
                     /// loop through all players now.
-                    for (const index in player_information) {
+                    for( const index in player_information )
+                    {
                         /// player from object index
-                        var player = player_information[index];
+                        var player = player_information[index]
 
                         /// start the row, but strikethrough dead players
-                        if (player.health <= 0) {
-                            output = output.concat(
-                                `<tr style="text-decoration: line-through">`,
-                            );
-                        } else {
-                            output = output.concat(`<tr>`);
+                        if( player.health <= 0 )
+                        {
+                            output = output.concat(`<tr style="text-decoration: line-through">`)
+                        }
+                        else
+                        {
+                            output = output.concat(`<tr>`)
                         }
 
                         /// set the player name red/green depending on if enemy or not.
-                        if (player.is_enemy) {
-                            output = output.concat(
-                                `<td style="color: red;">${player.name}</td>`,
-                            );
-                        } else {
-                            output = output.concat(
-                                `<td style="color: green;">${player.name}</td>`,
-                            );
+                        if( player.is_enemy )
+                        {
+                            output = output.concat(`<td style="color: red;">${player.name}</td>`);
+                        }
+                        else
+                        {
+                            output = output.concat(`<td style="color: green;">${player.name}</td>`);
                         }
 
                         /// create a hyperlink for the Steam URL so you can /research/ people.
-                        if (player.steam != 'BOT') {
+                        if( player.steam != "BOT" )
+                        {
                             /// allows the user to open their steamid.uk in a new tab.
-                            output = output.concat(
-                                `<td><a target="_blank" href="https://steamid.uk/profile/${player.steam}">${player.steam}</a></td>`,
-                            );
-                        } else {
-                            output = output.concat(`<td>BOT</td>`);
+                            output = output.concat(`<td><a target="_blank" href="https://steamid.uk/profile/${player.steam}">${player.steam}</a></td>`)
+                        }
+                        else
+                        {
+                            output = output.concat(`<td>BOT</td>`)
                         }
 
                         /// add health
-                        output = output.concat(`<td>${player.health}</td>`);
+                        output = output.concat(`<td>${player.health}</td>`)
 
                         /// for CS games, add additional information.
-                        if (paio.is_cs) {
+                        if( paio.is_cs )
+                        {
                             output = output.concat(`
                                 <td>${player.armor}</td>
                                 <td style="color:green;">$${player.money}</td>
@@ -285,16 +275,18 @@
                         }
 
                         /// for TF2, add additional information
-                        if (paio.game == 'TF2') {
-                            var class_name = paio.classes[player.class];
+                        if( paio.game == "TF2" )
+                        {
+                            var class_name = paio.classes[ player.class ]
                             output = output.concat(`<td>${class_name}</td>`);
 
                             /// If medic, show weapon charge.
-                            if (player.class == 5) {
-                                output = output.concat(
-                                    `<td>${player.charge}</td>`,
-                                );
-                            } else {
+                            if( player.class == 5 )
+                            {
+                                output = output.concat(`<td>${player.charge}</td>`);
+                            }
+                            else
+                            {
                                 output = output.concat(`<td>N/A</td>`);
                             }
 
@@ -304,15 +296,16 @@
 
                     /// close our table.
                     output = output.concat(`</table>`);
-
+                    
                     /// set all player information
-                    $('#paio_players').html(output);
-                },
+                    $('#paio_players').html(output)
+                }
             };
 
-            $(document).ready(function () {
+            $( document ).ready(function() {
                 paio.load();
             });
+
         </script>
     </head>
 
@@ -320,4 +313,5 @@
         <div id="paio_players"></div>
         <div id="modules"></div>
     </body>
+
 </html>

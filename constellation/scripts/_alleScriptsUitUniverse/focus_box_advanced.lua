@@ -489,7 +489,17 @@ function focus_box_advanced.OnHumanizerTarget(localplayer, localweapon, enemy)
             }
         end
     end
-
+    if boneList[1] ~= nil and dimensions ~= nil then
+        focus_box_advanced.playerArray = {
+            bones = boneList,
+            box = { left = dimensions["left"], top = dimensions["top"], right = dimensions["right"],
+                bottom = dimensions["bottom"] },
+            head = { x = bones[8].x, y = bones[8].y, rx = bones[7].x, ry = bones[7].y },
+            name = player["name"],
+            health = health,
+            weaponText = weaponText
+        }
+    end
 
 end
 
@@ -548,7 +558,8 @@ function focus_box_advanced.OnOverlayRender(width, height, center_x, center_y)
                 player.box["top"] + lineHeight,
                 { r = focus_box_advanced.esp_colorR, g = focus_box_advanced.esp_colorG, b = focus_box_advanced.esp_colorB,
                     a = 255 }, 2)
-            constellation.windows.overlay.line(player.box["left"], player.box["top"] + 3 * lineHeight, player.box["left"
+            constellation.windows.overlay.line(player.box["left"], player.box["top"] + 3 * lineHeight,
+                player.box["left"
                 ], player.box["top"] + player.box["bottom"],
                 { r = focus_box_advanced.esp_colorR, g = focus_box_advanced.esp_colorG, b = focus_box_advanced.esp_colorB,
                     a = 255 }, 2)
@@ -609,7 +620,8 @@ function focus_box_advanced.OnOverlayRender(width, height, center_x, center_y)
 
     -- Headdot
     if focus_box_advanced.drawHeadDot == 1 then
-        constellation.windows.overlay.box(player.head.x - 1, player.head.y - 1, 2, 2, 1, { r = 255, g = 0, b = 0, a = 255 })
+        constellation.windows.overlay.box(player.head.x - 1, player.head.y - 1, 2, 2, 1,
+            { r = 255, g = 0, b = 0, a = 255 })
     end
 
     -- Bone ESP
