@@ -50,7 +50,7 @@ local scan_esp =
         dispenser = nil,
         teleporter = nil,
 
-        healthy_url = "https://i.imgur.com/HaKcQps.png",
+        healthy_url = "https://i.imgur.com/CU5O8yJ.png",
         hurt_url = "https://i.imgur.com/9ZoZ96a.png",
         sentry_url = "https://wiki.teamfortress.com/w/images/thumb/7/78/RED_Level_3_Sentry_Gun.png/529px-RED_Level_3_Sentry_Gun.png",
         dispenser_url = "https://wiki.teamfortress.com/w/images/1/1a/Lvl3dispenser.png",
