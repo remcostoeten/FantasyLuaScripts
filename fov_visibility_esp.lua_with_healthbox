@@ -1,0 +1,110 @@
+--[[
+    @title
+        Visibillity alert ESP
+    @author
+        hoxyz
+    @notes
+        ESP with small FOV which shows a certain color when the enemy is behind an object or in sight. Blabla WiP
+--]]
+
+local fov_visibility_esp = {
+
+
+}
+
+
+function fov_visibility_esp.OnConstellationCalibrated()
+    fov_visibility_esp.m_iHealth = constellation.memory.netvar("DT_BasePlayer", "m_iHealth")
+end
+
+function fov_visibility_esp.OnConstellationTick(localplayer)
+    if localplayer == nil then return end
+    local player_information = constellation.game.get_player(localplayer)
+    local enemies = constellation.game.get_enemies()
+
+    if not constellation.game.bsp.parse() then return end
+    if not player_information then return end
+
+    for _, player in pairs(enemies) do
+        local health = constellation.memory.read_integer(player["address"] + fov_visibility_esp.m_iHealth)
+
+        local dimensions = constellation.game.get_box_dimensions(player)
+        local result = constellation.game.bsp.trace_ray(
+            player_information["eye_position"]["x"], player_information["eye_position"]["y"],
+            player_information["eye_position"]["z"],
+            player["eye_position"]["x"], player["eye_position"]["y"], player["eye_position"]["z"]
+        )
+
+        if result then
+            if constellation.game.is_in_fov(player, 15) then
+                if health < 50 then
+                    if dimensions ~= nil then
+                        constellation.windows.overlay.box(dimensions["left"], dimensions["top"], dimensions["right"]
+                            ,
+                            dimensions["bottom"] + 1, 1, { r = 255, g = 255, b = 255, a = 140 })
+                    end
+                    constellation.windows.overlay.box_filled(1335, 550, 15, 15, { r = 255, g = 0, b = 0, a = 75 })
+                end
+
+                if health >= 50 then
+                    if dimensions ~= nil then
+                        constellation.windows.overlay.box(dimensions["left"], dimensions["top"], dimensions["right"]
+                            ,
+                            dimensions["bottom"] + 1, 1, { r = 255, g = 255, b = 255, a = 75 })
+
+                    end
+
+                    constellation.windows.overlay.box_filled(1355, 550, 15, 15, { r = 0, g = 255, b = 0, a = 100 })
+
+                end
+            end
+        else
+            if health < 50 then
+                if constellation.game.is_in_fov(player, 15) then
+                    if dimensions ~= nil then
+                        constellation.windows.overlay.box(dimensions["left"], dimensions["top"], dimensions["right"]
+                            ,
+                            dimensions["bottom"] + 1, 1, { r = 255, g = 0, b = 0, a = 140 })
+                    end
+                    constellation.windows.overlay.box_filled(1335, 550, 15, 15, { r = 255, g = 0, b = 0, a = 75 })
+                end
+            end
+
+            if health >= 50 then
+                if constellation.game.is_in_fov(player, 15) then
+
+                    if dimensions ~= nil then
+                        constellation.windows.overlay.box(dimensions["left"], dimensions["top"], dimensions["right"]
+                            ,
+                            dimensions["bottom"] + 1, 1, { r = 255, g = 0, b = 0, a = 140 })
+
+                    end
+
+                    constellation.windows.overlay.box_filled(1355, 550, 15, 15, { r = 0, g = 255, b = 0, a = 75 })
+
+                end
+            end
+        end
+
+
+        --     if result then
+        --         if dimensions ~= nil then
+        --             constellation.windows.overlay.box(dimensions["left"], dimensions["top"], dimensions["right"],
+        --                 dimensions["bottom"] + 1, 1, { r = 255, g = 255, b = 255, a = 174 })
+        --         end
+        --     end
+        -- else
+        --     if constellation.game.is_in_fov(player, 15) then
+        --         if dimensions ~= nil then
+        --             constellation.windows.overlay.box(dimensions["left"], dimensions["top"], dimensions["right"],
+        --                 dimensions["bottom"] + 1, 1, { r = 255, g = 0, b = 0, a = 174 })
+        --         end
+        --     end
+        -- end
+
+        -- ::continue::
+        -- constellation.log('test')
+    end
+end
+
+return fov_visibility_esp
